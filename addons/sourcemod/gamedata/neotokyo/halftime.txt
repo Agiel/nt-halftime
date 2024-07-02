@@ -1,0 +1,25 @@
+"Games"
+{
+	"NeotokyoSource"
+	{
+		"Signatures"
+		{
+			"Sig_StartNewRound"
+			{
+				"library"   "server"
+				"windows"	"\x83\xEC\x10\x55\x56\x8B\xF1\x80\xBE\xA8\x02\x00\x00\x01\x57\x74"
+
+			}
+		}
+		"Functions"
+		{
+			"Fn_StartNewRound"
+			{
+				"signature"	"Sig_StartNewRound"
+				"callconv"	"thiscall"
+				"return"	"void"
+				"this"		"address"
+			}
+		}
+	}
+}
