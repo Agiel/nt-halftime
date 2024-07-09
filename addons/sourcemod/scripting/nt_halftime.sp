@@ -1,11 +1,12 @@
 #include <sourcemod>
 #include <dhooks>
 #include <neotokyo>
+#include <nt_competitive_natives>
 
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "0.0.1"
+#define PLUGIN_VERSION "0.0.2"
 
 public Plugin myinfo =
 {
@@ -60,7 +61,7 @@ void CreateDetour()
 
 MRESReturn StartNewRound(Address pThis, DHookReturn hReturn)
 {
-	if (!g_hHalfTimeEnabled.BoolValue)
+	if (!g_hHalfTimeEnabled.BoolValue || !Competitive_IsLive() || Competitive_IsPaused())
 	{
 		return MRES_Ignored;
 	}
@@ -77,7 +78,27 @@ MRESReturn StartNewRound(Address pThis, DHookReturn hReturn)
 	{
 		GameRules_SetProp("m_iAttackingTeam", TEAM_JINRAI);
 	}
-	// else keep swapping every round during sudden death
+	else if (m_iRoundNumber == roundLimit)
+	{
+		// We've reached sudden death. Bump everyone to lt...
+		if (g_hHalftimeReset.BoolValue)
+		{
+			for (int i = 1; i <= MaxClients; i++)
+			{
+				if (IsValidClient(i) && GetPlayerXP(i) < 20)
+				{
+					SetPlayerXP(i, 20);
+				}
+			}
+		}
+		// ...and keep swapping sides every round
+	}
+
+	// Warn players in advance to make the swap less abrupt
+	if (m_iRoundNumber == roundLimit / 2 - 1)
+	{
+		PrintToChatAll("Last round of first half!");
+	}
 
 	// Half-time reached
 	if (m_iRoundNumber == roundLimit / 2)
